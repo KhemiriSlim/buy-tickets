@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: ticketing
       POSTGRES_USER: ticketing_user
-      POSTGRES_PASSWORD: 21637888
+      POSTGRES_PASSWORD: change_me_dev_password
     ports:
       - "5432:5432"
     volumes:
