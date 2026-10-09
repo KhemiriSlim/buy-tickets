@@ -118,30 +118,65 @@ app.post("/auth/register", async (req, res) => {
 
 
 
-app.post("/tickets", async(req,res) =>{
-  const {userId,eventId,quantity} = req.body ?? {};
-  if (!userId || !eventId || !quantity) {
-    return res.status(400).json({ error: "All fields are required" });
+app.post("/tickets", async (req, res) => {
+  const { userId, eventId, quantity } = req.body ?? {};
+
+  if (!Number.isInteger(userId) || !Number.isInteger(eventId)) {
+    return res.status(400).json({ error: "userId and eventId must be whole numbers" });
   }
-  if (typeof quantity !== "number" || quantity <= 0) {
-    return res.status(400).json({ error: "Quantity must be a positive number" });
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    return res.status(400).json({ error: "Quantity must be a whole number of at least 1" });
   }
-  try{
-    const ticket = await prisma.ticket.create({
-      data : {
-        userId,
-        eventId,
-        quantity : Number(quantity)
-      }
-    });
+
+  try {
+    const ticket = await prisma.$transaction(
+      async (tx) => {
+        const event = await tx.event.findUnique({ where: { id: eventId } });
+        if (!event) throw new Error("EVENT_NOT_FOUND");
+
+        const user = await tx.user.findUnique({ where: { id: userId } });
+        if (!user) throw new Error("USER_NOT_FOUND");
+
+        const sold = await tx.ticket.aggregate({
+          where: { eventId },
+          _sum: { quantity: true },
+        });
+        const remaining = event.capacity - (sold._sum.quantity ?? 0);
+        if (quantity > remaining) throw new Error(`SOLD_OUT:${remaining}`);
+
+        return tx.ticket.create({
+          data: { userId, eventId, quantity },
+        });
+      },
+      { isolationLevel: "Serializable" }
+    );
+
     res.status(201).json(ticket);
-  }
-  catch(error){
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message === "EVENT_NOT_FOUND") {
+        return res.status(404).json({ error: "Event not found" });
+      }
+      if (error.message === "USER_NOT_FOUND") {
+        return res.status(404).json({ error: "User not found" });
+      }
+      if (error.message.startsWith("SOLD_OUT:")) {
+        const remaining = error.message.split(":")[1];
+        return res.status(409).json({ error: `Only ${remaining} tickets left` });
+      }
+    }
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "P2034"
+    ) {
+      return res.status(409).json({ error: "Too many purchases at once, please try again" });
+    }
     console.error(error);
     res.status(500).json({ error: "Failed to buy ticket" });
   }
-
-})
+});
 
 
 
