@@ -30,6 +30,7 @@ model User {
   email        String   @unique
   name         String
   passwordHash String
+  role         Role     @default(USER)
   createdAt    DateTime @default(now())
   tickets      Ticket[]
 }
@@ -42,4 +43,9 @@ model Ticket {
   event     Event    @relation(fields: [eventId], references: [id])
   quantity  Int
   createdAt DateTime @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
 }
