@@ -3,6 +3,7 @@ import EventsPage from './pages/EventsPage'
 import EventDetailsPage from './pages/EventDetailsPage'
 import LoginPage from './pages/LoginPage'
 import Header from './components/Header'
+import RegisterPage from './pages/RegisterPage'
 function App() {
   return (
     <>
@@ -11,6 +12,7 @@ function App() {
       <Route path="/" element={<EventsPage />} />
       <Route path="/events/:id" element={<EventDetailsPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
     </Routes>
     </>
   )
