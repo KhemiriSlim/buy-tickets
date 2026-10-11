@@ -15,7 +15,7 @@ export default function EventCard({ event }: Props) {
       <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
         {event.location} · {new Date(event.date).toLocaleDateString()}
       </p>
-      <p className="mt-1 text-sm font-medium">${event.price}</p>
+      <p className="mt-1 text-sm font-medium">{event.price} ETH</p>
     </li>
   )
 }

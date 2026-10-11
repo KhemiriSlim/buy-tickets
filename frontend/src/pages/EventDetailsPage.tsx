@@ -92,7 +92,7 @@ function EventDetailsPage() {
             <dt className="text-xs uppercase tracking-wide text-gray-500">
               Price
             </dt>
-            <dd className="mt-1 font-medium">${event.price}</dd>
+            <dd className="mt-1 font-medium">{event.price} ETH</dd>
           </div>
         </dl>
 

@@ -69,7 +69,7 @@ function MyTicketsPage() {
             </p>
 
             <p className="mt-2 text-sm">
-              Total: ${(Number(ticket.event.price) * ticket.quantity).toFixed(2)}
+              Total: ${(Number(ticket.event.price) * ticket.quantity).toFixed(4)}
             </p>
 
             <p className="mt-1 text-xs text-gray-400">
