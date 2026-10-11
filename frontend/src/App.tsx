@@ -4,6 +4,7 @@ import EventDetailsPage from './pages/EventDetailsPage'
 import LoginPage from './pages/LoginPage'
 import Header from './components/Header'
 import RegisterPage from './pages/RegisterPage'
+import MyTicketsPage from './pages/MyTicketsPage'
 function App() {
   return (
     <>
@@ -13,6 +14,7 @@ function App() {
       <Route path="/events/:id" element={<EventDetailsPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/my-tickets" element={<MyTicketsPage />} />
     </Routes>
     </>
   )

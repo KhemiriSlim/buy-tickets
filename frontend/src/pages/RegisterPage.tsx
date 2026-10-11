@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { login, register } from '../api/auth'
-import { setToken } from '../api/token'
+import { register } from '../api/auth'
 import type { FormEvent } from 'react'
 function RegisterPage() {
     const [name, setName] = useState('')
@@ -16,7 +15,7 @@ function RegisterPage() {
         setLoading(true)
         setError(null)
         try{
-            const res = await register(name, email, password)
+            await register(name, email, password)
             navigate('/login')
         }catch (err) {
             setError(err instanceof Error ? err.message : "Something went wrong")

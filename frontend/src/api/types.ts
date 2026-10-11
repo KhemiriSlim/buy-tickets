@@ -13,3 +13,13 @@ export type EventItem = {
 export type EventDetails = EventItem & {
   remaining: number;
 };
+
+
+export type TicketItem  =  {
+  id : number;
+  userId : number;
+  eventId : number;
+  quantity : number;
+  createdAt : string;
+  event : EventItem;
+}
