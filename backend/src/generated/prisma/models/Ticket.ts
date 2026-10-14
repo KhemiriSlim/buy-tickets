@@ -45,6 +45,8 @@ export type TicketMinAggregateOutputType = {
   userId: number | null
   eventId: number | null
   quantity: number | null
+  txHash: string | null
+  walletAddress: string | null
   createdAt: Date | null
 }
 
@@ -53,6 +55,8 @@ export type TicketMaxAggregateOutputType = {
   userId: number | null
   eventId: number | null
   quantity: number | null
+  txHash: string | null
+  walletAddress: string | null
   createdAt: Date | null
 }
 
@@ -61,6 +65,8 @@ export type TicketCountAggregateOutputType = {
   userId: number
   eventId: number
   quantity: number
+  txHash: number
+  walletAddress: number
   createdAt: number
   _all: number
 }
@@ -85,6 +91,8 @@ export type TicketMinAggregateInputType = {
   userId?: true
   eventId?: true
   quantity?: true
+  txHash?: true
+  walletAddress?: true
   createdAt?: true
 }
 
@@ -93,6 +101,8 @@ export type TicketMaxAggregateInputType = {
   userId?: true
   eventId?: true
   quantity?: true
+  txHash?: true
+  walletAddress?: true
   createdAt?: true
 }
 
@@ -101,6 +111,8 @@ export type TicketCountAggregateInputType = {
   userId?: true
   eventId?: true
   quantity?: true
+  txHash?: true
+  walletAddress?: true
   createdAt?: true
   _all?: true
 }
@@ -196,6 +208,8 @@ export type TicketGroupByOutputType = {
   userId: number
   eventId: number
   quantity: number
+  txHash: string
+  walletAddress: string
   createdAt: Date
   _count: TicketCountAggregateOutputType | null
   _avg: TicketAvgAggregateOutputType | null
@@ -227,6 +241,8 @@ export type TicketWhereInput = {
   userId?: Prisma.IntFilter<"Ticket"> | number
   eventId?: Prisma.IntFilter<"Ticket"> | number
   quantity?: Prisma.IntFilter<"Ticket"> | number
+  txHash?: Prisma.StringFilter<"Ticket"> | string
+  walletAddress?: Prisma.StringFilter<"Ticket"> | string
   createdAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
@@ -237,6 +253,8 @@ export type TicketOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   eventId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  txHash?: Prisma.SortOrder
+  walletAddress?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   event?: Prisma.EventOrderByWithRelationInput
@@ -244,22 +262,26 @@ export type TicketOrderByWithRelationInput = {
 
 export type TicketWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  txHash?: string
   AND?: Prisma.TicketWhereInput | Prisma.TicketWhereInput[]
   OR?: Prisma.TicketWhereInput[]
   NOT?: Prisma.TicketWhereInput | Prisma.TicketWhereInput[]
   userId?: Prisma.IntFilter<"Ticket"> | number
   eventId?: Prisma.IntFilter<"Ticket"> | number
   quantity?: Prisma.IntFilter<"Ticket"> | number
+  walletAddress?: Prisma.StringFilter<"Ticket"> | string
   createdAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
-}, "id">
+}, "id" | "txHash">
 
 export type TicketOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   eventId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  txHash?: Prisma.SortOrder
+  walletAddress?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.TicketCountOrderByAggregateInput
   _avg?: Prisma.TicketAvgOrderByAggregateInput
@@ -276,11 +298,15 @@ export type TicketScalarWhereWithAggregatesInput = {
   userId?: Prisma.IntWithAggregatesFilter<"Ticket"> | number
   eventId?: Prisma.IntWithAggregatesFilter<"Ticket"> | number
   quantity?: Prisma.IntWithAggregatesFilter<"Ticket"> | number
+  txHash?: Prisma.StringWithAggregatesFilter<"Ticket"> | string
+  walletAddress?: Prisma.StringWithAggregatesFilter<"Ticket"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Ticket"> | Date | string
 }
 
 export type TicketCreateInput = {
   quantity: number
+  txHash: string
+  walletAddress: string
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutTicketsInput
   event: Prisma.EventCreateNestedOneWithoutTicketsInput
@@ -291,11 +317,15 @@ export type TicketUncheckedCreateInput = {
   userId: number
   eventId: number
   quantity: number
+  txHash: string
+  walletAddress: string
   createdAt?: Date | string
 }
 
 export type TicketUpdateInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  txHash?: Prisma.StringFieldUpdateOperationsInput | string
+  walletAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutTicketsNestedInput
   event?: Prisma.EventUpdateOneRequiredWithoutTicketsNestedInput
@@ -306,6 +336,8 @@ export type TicketUncheckedUpdateInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   eventId?: Prisma.IntFieldUpdateOperationsInput | number
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  txHash?: Prisma.StringFieldUpdateOperationsInput | string
+  walletAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -314,11 +346,15 @@ export type TicketCreateManyInput = {
   userId: number
   eventId: number
   quantity: number
+  txHash: string
+  walletAddress: string
   createdAt?: Date | string
 }
 
 export type TicketUpdateManyMutationInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  txHash?: Prisma.StringFieldUpdateOperationsInput | string
+  walletAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -327,6 +363,8 @@ export type TicketUncheckedUpdateManyInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   eventId?: Prisma.IntFieldUpdateOperationsInput | number
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  txHash?: Prisma.StringFieldUpdateOperationsInput | string
+  walletAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -345,6 +383,8 @@ export type TicketCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   eventId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  txHash?: Prisma.SortOrder
+  walletAddress?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -360,6 +400,8 @@ export type TicketMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   eventId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  txHash?: Prisma.SortOrder
+  walletAddress?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -368,6 +410,8 @@ export type TicketMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   eventId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  txHash?: Prisma.SortOrder
+  walletAddress?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -464,6 +508,8 @@ export type TicketUncheckedUpdateManyWithoutUserNestedInput = {
 
 export type TicketCreateWithoutEventInput = {
   quantity: number
+  txHash: string
+  walletAddress: string
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutTicketsInput
 }
@@ -472,6 +518,8 @@ export type TicketUncheckedCreateWithoutEventInput = {
   id?: number
   userId: number
   quantity: number
+  txHash: string
+  walletAddress: string
   createdAt?: Date | string
 }
 
@@ -509,11 +557,15 @@ export type TicketScalarWhereInput = {
   userId?: Prisma.IntFilter<"Ticket"> | number
   eventId?: Prisma.IntFilter<"Ticket"> | number
   quantity?: Prisma.IntFilter<"Ticket"> | number
+  txHash?: Prisma.StringFilter<"Ticket"> | string
+  walletAddress?: Prisma.StringFilter<"Ticket"> | string
   createdAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
 }
 
 export type TicketCreateWithoutUserInput = {
   quantity: number
+  txHash: string
+  walletAddress: string
   createdAt?: Date | string
   event: Prisma.EventCreateNestedOneWithoutTicketsInput
 }
@@ -522,6 +574,8 @@ export type TicketUncheckedCreateWithoutUserInput = {
   id?: number
   eventId: number
   quantity: number
+  txHash: string
+  walletAddress: string
   createdAt?: Date | string
 }
 
@@ -555,11 +609,15 @@ export type TicketCreateManyEventInput = {
   id?: number
   userId: number
   quantity: number
+  txHash: string
+  walletAddress: string
   createdAt?: Date | string
 }
 
 export type TicketUpdateWithoutEventInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  txHash?: Prisma.StringFieldUpdateOperationsInput | string
+  walletAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutTicketsNestedInput
 }
@@ -568,6 +626,8 @@ export type TicketUncheckedUpdateWithoutEventInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  txHash?: Prisma.StringFieldUpdateOperationsInput | string
+  walletAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -575,6 +635,8 @@ export type TicketUncheckedUpdateManyWithoutEventInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  txHash?: Prisma.StringFieldUpdateOperationsInput | string
+  walletAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -582,11 +644,15 @@ export type TicketCreateManyUserInput = {
   id?: number
   eventId: number
   quantity: number
+  txHash: string
+  walletAddress: string
   createdAt?: Date | string
 }
 
 export type TicketUpdateWithoutUserInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  txHash?: Prisma.StringFieldUpdateOperationsInput | string
+  walletAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   event?: Prisma.EventUpdateOneRequiredWithoutTicketsNestedInput
 }
@@ -595,6 +661,8 @@ export type TicketUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   eventId?: Prisma.IntFieldUpdateOperationsInput | number
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  txHash?: Prisma.StringFieldUpdateOperationsInput | string
+  walletAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -602,6 +670,8 @@ export type TicketUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   eventId?: Prisma.IntFieldUpdateOperationsInput | number
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  txHash?: Prisma.StringFieldUpdateOperationsInput | string
+  walletAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -612,6 +682,8 @@ export type TicketSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   userId?: boolean
   eventId?: boolean
   quantity?: boolean
+  txHash?: boolean
+  walletAddress?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
@@ -622,6 +694,8 @@ export type TicketSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   userId?: boolean
   eventId?: boolean
   quantity?: boolean
+  txHash?: boolean
+  walletAddress?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
@@ -632,6 +706,8 @@ export type TicketSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   userId?: boolean
   eventId?: boolean
   quantity?: boolean
+  txHash?: boolean
+  walletAddress?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
@@ -642,10 +718,12 @@ export type TicketSelectScalar = {
   userId?: boolean
   eventId?: boolean
   quantity?: boolean
+  txHash?: boolean
+  walletAddress?: boolean
   createdAt?: boolean
 }
 
-export type TicketOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "eventId" | "quantity" | "createdAt", ExtArgs["result"]["ticket"]>
+export type TicketOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "eventId" | "quantity" | "txHash" | "walletAddress" | "createdAt", ExtArgs["result"]["ticket"]>
 export type TicketInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
@@ -670,6 +748,8 @@ export type $TicketPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     userId: number
     eventId: number
     quantity: number
+    txHash: string
+    walletAddress: string
     createdAt: Date
   }, ExtArgs["result"]["ticket"]>
   composites: {}
@@ -1100,6 +1180,8 @@ export interface TicketFieldRefs {
   readonly userId: Prisma.FieldRef<"Ticket", 'Int'>
   readonly eventId: Prisma.FieldRef<"Ticket", 'Int'>
   readonly quantity: Prisma.FieldRef<"Ticket", 'Int'>
+  readonly txHash: Prisma.FieldRef<"Ticket", 'String'>
+  readonly walletAddress: Prisma.FieldRef<"Ticket", 'String'>
   readonly createdAt: Prisma.FieldRef<"Ticket", 'DateTime'>
 }
     

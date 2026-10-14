@@ -4,7 +4,8 @@ import cors from "cors";
 import { prisma } from "./lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
+import { isHash, parseEther } from "viem";
+import { verifyPayment, PaymentError } from "./lib/verifyPayment";
 const PORT = process.env.PORT || 3000;
 const app = express();
 
@@ -215,7 +216,7 @@ app.post("/auth/login", async (req, res) => {
 });
 
 app.post("/tickets", authMiddleware, async (req, res) => {
-  const { eventId, quantity } = req.body ?? {};
+  const { eventId, quantity, txHash } = req.body ?? {};
   const userId = req.userId;
 
   if (!userId) {
@@ -227,13 +228,35 @@ app.post("/tickets", authMiddleware, async (req, res) => {
   if (!Number.isInteger(quantity) || quantity < 1) {
     return res.status(400).json({ error: "Quantity must be a whole number of at least 1" });
   }
+  if (typeof txHash !== "string") {
+    return res.status(400).json({ error: "txHash is required" });
+  }
+
+  const hash = txHash.toLowerCase();
+  if (!isHash(hash)) {
+    return res.status(400).json({ error: "Invalid transaction hash" });
+  }
 
   try {
+    const event = await prisma.event.findUnique({ where: { id: eventId } });
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    // quick check so a reused hash never costs an RPC call
+    const alreadyUsed = await prisma.ticket.findUnique({ where: { txHash: hash } });
+    if (alreadyUsed) {
+      return res.status(409).json({ error: "Payment already used" });
+    }
+
+    // the expected amount comes from the DATABASE, never from the request
+    const expectedWei = parseEther(event.price.toFixed()) * BigInt(quantity);
+
+    // verify on-chain BEFORE opening the database transaction
+    const walletAddress = await verifyPayment(hash, expectedWei);
+
     const ticket = await prisma.$transaction(
       async (tx) => {
-        const event = await tx.event.findUnique({ where: { id: eventId } });
-        if (!event) throw new Error("EVENT_NOT_FOUND");
-
         const user = await tx.user.findUnique({ where: { id: userId } });
         if (!user) throw new Error("USER_NOT_FOUND");
 
@@ -245,7 +268,13 @@ app.post("/tickets", authMiddleware, async (req, res) => {
         if (quantity > remaining) throw new Error(`SOLD_OUT:${remaining}`);
 
         return tx.ticket.create({
-          data: { userId, eventId, quantity },
+          data: {
+            userId,
+            eventId,
+            quantity,
+            txHash: hash,
+            walletAddress: walletAddress.toLowerCase(),
+          },
         });
       },
       { isolationLevel: "Serializable" }
@@ -253,31 +282,32 @@ app.post("/tickets", authMiddleware, async (req, res) => {
 
     res.status(201).json(ticket);
   } catch (error) {
+    if (error instanceof PaymentError) {
+      return res.status(402).json({ error: error.message });
+    }
     if (error instanceof Error) {
-      if (error.message === "EVENT_NOT_FOUND") {
-        return res.status(404).json({ error: "Event not found" });
-      }
       if (error.message === "USER_NOT_FOUND") {
         return res.status(404).json({ error: "User not found" });
       }
       if (error.message.startsWith("SOLD_OUT:")) {
         const remaining = error.message.split(":")[1];
-        return res.status(409).json({ error: `Only ${remaining} tickets left` });
+        return res.status(409).json({
+          error: `Only ${remaining} tickets left. Your payment ${hash} was received, so keep this hash to request a refund.`,
+        });
       }
     }
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      error.code === "P2034"
-    ) {
-      return res.status(409).json({ error: "Too many purchases at once, please try again" });
+    if (typeof error === "object" && error !== null && "code" in error) {
+      if (error.code === "P2002") {
+        return res.status(409).json({ error: "Payment already used" });
+      }
+      if (error.code === "P2034") {
+        return res.status(409).json({ error: "Too many purchases at once, please try again" });
+      }
     }
     console.error(error);
     res.status(500).json({ error: "Failed to buy ticket" });
   }
 });
-
 app.get("/tickets/me",authMiddleware,async (req,res)=>{
   const userId= req.userId;
   if(!userId){

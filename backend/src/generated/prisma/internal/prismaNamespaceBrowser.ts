@@ -104,6 +104,8 @@ export const TicketScalarFieldEnum = {
   userId: 'userId',
   eventId: 'eventId',
   quantity: 'quantity',
+  txHash: 'txHash',
+  walletAddress: 'walletAddress',
   createdAt: 'createdAt'
 } as const
 

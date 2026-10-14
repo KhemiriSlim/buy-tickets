@@ -4,7 +4,7 @@ import type { EventDetails } from '../api/types'
 import { getEventById } from '../api/event'
 import { buyTicket } from '../api/tickets'
 import { getToken } from '../api/token'
-
+import {payForTickets} from "../api/payment"
 function EventDetailsPage() {
   const { id } = useParams()
   const eventId = Number(id)
@@ -13,7 +13,7 @@ function EventDetailsPage() {
   const [event, setEvent] = useState<EventDetails | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
+  
   const [quantity, setQuantity] = useState(1)
   const [buying, setBuying] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -35,25 +35,31 @@ function EventDetailsPage() {
 
   const loggedIn = Boolean(getToken())
 
-  async function handleBuy() {
-    setBuying(true)
-    setMessage(null)
+ async function handleBuy() {
+  if (!event) return
 
-    try {
-      await buyTicket(eventId, quantity)
-      setMessageIsError(false)
-      setMessage('Ticket(s) purchased successfully!')
+  setBuying(true)
+  setMessage(null)
 
-      const updated = await getEventById(eventId)
-      setEvent(updated)
-      setQuantity(1)
-    } catch (err) {
-      setMessageIsError(true)
-      setMessage(err instanceof Error ? err.message : 'Something went wrong')
-    } finally {
-      setBuying(false)
-    }
+  try {
+    setMessageIsError(false)
+    setMessage('Confirm the payment in MetaMask...')
+    const hash = await payForTickets(event.price, quantity)
+
+    setMessage('Payment confirmed. Creating your ticket...')
+    await buyTicket(eventId, quantity, hash)
+
+    setMessage('Ticket(s) purchased successfully!')
+    const updated = await getEventById(eventId)
+    setEvent(updated)
+    setQuantity(1)
+  } catch (err) {
+    setMessageIsError(true)
+    setMessage(err instanceof Error ? err.message : 'Something went wrong')
+  } finally {
+    setBuying(false)
   }
+}
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">
